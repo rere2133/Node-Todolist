@@ -23,11 +23,15 @@ const requestListener = async (req, res) => {
     req.on("end", async () => {
       try {
         const data = JSON.parse(body);
-        await Post.create({
-          content: data.content,
-          image: data.image,
-        });
-        await handleSuccess(res, "新增成功");
+        if (data.content != undefined) {
+          await Post.create({
+            content: data.content,
+            image: data.image,
+          });
+          await handleSuccess(res, "新增成功");
+        } else {
+          handleError(res);
+        }
       } catch (err) {
         handleError(res, 400, err.message);
       }
@@ -44,8 +48,13 @@ const requestListener = async (req, res) => {
       try {
         const id = req.url.split("/").pop();
         const data = JSON.parse(body);
-        await Post.findByIdAndUpdate(id, data);
-        await handleSuccess(res, "成功更新一筆");
+        if (data.content != undefined) {
+          await Post.findByIdAndUpdate(id, {
+            content: data.content,
+            image: data.image || "",
+          });
+          await handleSuccess(res, "成功更新一筆");
+        }
       } catch (err) {
         handleError(res, 400, err.message);
       }
