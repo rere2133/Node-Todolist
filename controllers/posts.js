@@ -34,11 +34,17 @@ const posts = {
     try {
       const data = JSON.parse(body);
       if (data.content) {
-        await Post.findByIdAndUpdate(id, {
+        let editedPost = await Post.findByIdAndUpdate(id, {
           content: data.content,
           image: data.image || "",
         });
-        await handleSuccess(res, "成功更新一筆");
+        if (editedPost !== null) {
+          await handleSuccess(res, "成功更新一筆");
+        } else {
+          handleError(res);
+        }
+      } else {
+        handleError(res);
       }
     } catch (err) {
       handleError(res, 400, err.message);
